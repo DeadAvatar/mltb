@@ -49,39 +49,34 @@ def _clone(message, bot, multi=0):
             deleteMessage(bot, msg)
             return sendMessage(str(e), bot, message)
     if is_unified:
-        try:
         msg = sendMessage(f"Processing: <code>{link}</code>", bot, message)
         link = unified(link)
-            deleteMessage(bot, msg)
-        except DirectDownloadLinkException as e:
+        deleteMessage(bot, msg)
+    except DirectDownloadLinkException as e:
             deleteMessage(bot, msg)
             return sendMessage(str(e), bot, message)
     if is_udrive:
-        try:
         msg = sendMessage(f"Processing: <code>{link}</code>", bot, message)
         link = udrive(link)
-            deleteMessage(bot, msg)
-        except DirectDownloadLinkException as e:
+        deleteMessage(bot, msg)
+    except DirectDownloadLinkException as e:
             deleteMessage(bot, msg)
             return sendMessage(str(e), bot, message)
     if is_sharer:
-        try:
         msg = sendMessage(f"Processing: <code>{link}</code>", bot, message)
         link = sharer_pw_dl(link)
-            deleteMessage(bot, msg)
-        except DirectDownloadLinkException as e:
+        deleteMessage(bot, msg)
+    except DirectDownloadLinkException as e:
             deleteMessage(bot, msg)
             return sendMessage(str(e), bot, message)
     if is_drivehubs:
-        try:
         msg = sendMessage(f"Processing: <code>{link}</code>", bot, message)
         link = drivehubs(link)
-            deleteMessage(bot, msg)
-        except DirectDownloadLinkException as e:
+        deleteMessage(bot, msg)
+    except DirectDownloadLinkException as e:
             deleteMessage(bot, msg)
             return sendMessage(str(e), bot, message)
     if is_gdrive_link(link):
-        try:
         gd = GoogleDriveHelper()
         res, size, name, files = gd.helper(link)
         if res != "":
