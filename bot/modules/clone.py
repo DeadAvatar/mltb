@@ -51,7 +51,7 @@ def _clone(message, bot, multi=0):
     if is_unified:
         msg = sendMessage(f"Processing: <code>{link}</code>", bot, message)
         link = unified(link)
-        deleteMessage(bot, msg)
+            deleteMessage(bot, msg)
         except DirectDownloadLinkException as e:
             deleteMessage(bot, msg)
             return sendMessage(str(e), bot, message)
