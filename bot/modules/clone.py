@@ -52,7 +52,7 @@ def _clone(message, bot, multi=0):
         msg = sendMessage(f"Processing: <code>{link}</code>", bot, message)
         link = unified(link)
         deleteMessage(bot, msg)
-        except DirectDownloadLinkException as e:
+    except DirectDownloadLinkException as e:
             deleteMessage(bot, msg)
             return sendMessage(str(e), bot, message)
     if is_udrive:
