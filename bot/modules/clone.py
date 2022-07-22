@@ -49,31 +49,35 @@ def _clone(message, bot, multi=0):
             deleteMessage(bot, msg)
             return sendMessage(str(e), bot, message)
     if is_unified:
-        msg = sendMessage(f"Processing: <code>{link}</code>", bot, message)
-        link = unified(link)
-        deleteMessage(bot, msg)
-    except DirectDownloadLinkException as e:
+        try:
+            msg = sendMessage(f"Processing: <code>{link}</code>", bot, message)
+            link = unified(link)
+            deleteMessage(bot, msg)
+        except DirectDownloadLinkException as e:
             deleteMessage(bot, msg)
             return sendMessage(str(e), bot, message)
     if is_udrive:
-        msg = sendMessage(f"Processing: <code>{link}</code>", bot, message)
-        link = udrive(link)
-        deleteMessage(bot, msg)
-    except DirectDownloadLinkException as e:
+        try:
+            msg = sendMessage(f"Processing: <code>{link}</code>", bot, message)
+            link = udrive(link)
+            deleteMessage(bot, msg)
+        except DirectDownloadLinkException as e:
             deleteMessage(bot, msg)
             return sendMessage(str(e), bot, message)
     if is_sharer:
-        msg = sendMessage(f"Processing: <code>{link}</code>", bot, message)
-        link = sharer_pw_dl(link)
-        deleteMessage(bot, msg)
-    except DirectDownloadLinkException as e:
+        try:
+            msg = sendMessage(f"Processing: <code>{link}</code>", bot, message)
+            link = sharer_pw_dl(link)
+            deleteMessage(bot, msg)
+        except DirectDownloadLinkException as e:
             deleteMessage(bot, msg)
             return sendMessage(str(e), bot, message)
     if is_drivehubs:
-        msg = sendMessage(f"Processing: <code>{link}</code>", bot, message)
-        link = drivehubs(link)
-        deleteMessage(bot, msg)
-    except DirectDownloadLinkException as e:
+        try:
+            msg = sendMessage(f"Processing: <code>{link}</code>", bot, message)
+            link = drivehubs(link)
+            deleteMessage(bot, msg)
+        except DirectDownloadLinkException as e:
             deleteMessage(bot, msg)
             return sendMessage(str(e), bot, message)
     if is_gdrive_link(link):
