@@ -16,27 +16,21 @@ from bot.helper.ext_utils.exceptions import DirectDownloadLinkException
 
 
 def _clone(message, bot, multi=0):
-    temp = message.text.split(" |", maxsplit=1)
-    arguments = temp[0].split(" ")
+    args = message.text.split(maxsplit=1)
     reply_to = message.reply_to_message
-    link = ""
-    try:
-        new_name = temp[1]
-        new_name = new_name.strip()
-    except Exception:
-        new_name = ""
-    if len(arguments) > 1:
-        link = arguments[1]
+    link = ''
+    if len(args) > 1:
+        link = args[1].strip()
         if link.isdigit():
             multi = int(link)
-            link = ""
+            link = ''
         elif message.from_user.username:
             tag = f"@{message.from_user.username}"
         else:
             tag = message.from_user.mention_html(message.from_user.first_name)
-    if reply_to is not None:
+    if reply_to:
         if len(link) == 0:
-            link = reply_to.text
+            link = reply_to.text.strip()
         if reply_to.from_user.username:
             tag = f"@{reply_to.from_user.username}"
         else:
@@ -46,64 +40,73 @@ def _clone(message, bot, multi=0):
     is_udrive = is_udrive_link(link)
     is_sharer = is_sharer_link(link)
     is_drivehubs = is_drivehubs_link(link)
-    if (is_gdtot or is_unified or is_udrive or is_sharer or is_drivehubs):
+    if is_gdtot:
         try:
-            msg = sendMessage(f"<b>Processing:</b> <code>{link}</code>", bot, message)
-            LOGGER.info(f"Processing: {link}")
-            if is_unified:
-                link = unified(link)
-            if is_gdtot:
-                link = gdtot(link)
-            if is_udrive:
-                link = udrive(link)
-            if is_sharer:
-                link = sharer_pw_dl(link)
-            if is_drivehubs:
-                link = drivehubs(link)
+            msg = sendMessage(f"Processing: <code>{link}</code>", bot, message)
+            link = gdtot(link)
             deleteMessage(bot, msg)
         except DirectDownloadLinkException as e:
+            deleteMessage(bot, msg)
+            return sendMessage(str(e), bot, message)
+    if is_unified:
+        msg = sendMessage(f"Processing: <code>{link}</code>", bot, message)
+        link = unified(link)
+        deleteMessage(bot, msg)
+        except DirectDownloadLinkException as e:
+            deleteMessage(bot, msg)
+            return sendMessage(str(e), bot, message)
+    if is_udrive:
+        msg = sendMessage(f"Processing: <code>{link}</code>", bot, message)
+        link = udrive(link)
+        deleteMessage(bot, msg)
+    except DirectDownloadLinkException as e:
+            deleteMessage(bot, msg)
+            return sendMessage(str(e), bot, message)
+    if is_sharer:
+        msg = sendMessage(f"Processing: <code>{link}</code>", bot, message)
+        link = sharer_pw_dl(link)
+        deleteMessage(bot, msg)
+    except DirectDownloadLinkException as e:
+            deleteMessage(bot, msg)
+            return sendMessage(str(e), bot, message)
+    if is_drivehubs:
+        msg = sendMessage(f"Processing: <code>{link}</code>", bot, message)
+        link = drivehubs(link)
+        deleteMessage(bot, msg)
+    except DirectDownloadLinkException as e:
             deleteMessage(bot, msg)
             return sendMessage(str(e), bot, message)
     if is_gdrive_link(link):
         gd = GoogleDriveHelper()
         res, size, name, files = gd.helper(link)
-        if new_name:
-            name = new_name
         if res != "":
             return sendMessage(res, bot, message)
         if STOP_DUPLICATE:
-            LOGGER.info("Checking File/Folder if already in Drive...")
+            LOGGER.info('Checking File/Folder if already in Drive...')
             smsg, button = gd.drive_list(name, True, True)
             if smsg:
                 msg3 = "File/Folder is already available in Drive.\nHere are the search results:"
                 return sendMarkup(msg3, bot, message, button)
         if multi > 1:
-            sleep(2)
-            nextmsg = type(
-                "nextmsg",
-                (object,),
-                {
-                    "chat_id": message.chat_id,
-                    "message_id": message.reply_to_message.message_id + 1,
-                },
-            )
-            nextmsg = sendMessage(arguments[0], bot, nextmsg)
+            sleep(4)
+            nextmsg = type('nextmsg', (object, ), {'chat_id': message.chat_id, 'message_id': message.reply_to_message.message_id + 1})
+            nextmsg = sendMessage(args[0], bot, nextmsg)
             nextmsg.from_user.id = message.from_user.id
             multi -= 1
-            sleep(2)
+            sleep(4)
             Thread(target=_clone, args=(nextmsg, bot, multi)).start()
         if files <= 20:
             msg = sendMessage(f"Cloning: <code>{link}</code>", bot, message)
-            result, button = gd.clone(link, name)
+            result, button = gd.clone(link)
             deleteMessage(bot, msg)
         else:
             drive = GoogleDriveHelper(name)
-            gid = "".join(SystemRandom().choices(ascii_letters + digits, k=12))
+            gid = ''.join(SystemRandom().choices(ascii_letters + digits, k=12))
             clone_status = CloneStatus(drive, size, message, gid)
             with download_dict_lock:
                 download_dict[message.message_id] = clone_status
             sendStatusMessage(message, bot)
-            result, button = drive.clone(link, name)
+            result, button = drive.clone(link)
             with download_dict_lock:
                 del download_dict[message.message_id]
                 count = len(download_dict)
@@ -116,27 +119,28 @@ def _clone(message, bot, multi=0):
                     update_all_messages()
             except IndexError:
                 pass
-        cc = f"\n\n<b>cc: </b>{tag}"
+        cc = f'\n\n<b>cc: </b>{tag}'
         if button in ["cancelled", ""]:
             sendMessage(f"{tag} {result}", bot, message)
         else:
             sendMarkup(result + cc, bot, message, button)
-            LOGGER.info(f"Cloning Done: {name}")
-        if (is_gdtot or is_unified or is_udrive or is_sharer):
+            LOGGER.info(f'Cloning Done: {name}')
+        if is_gdtot:
+            gd.deletefile(link)
+        if is_unified:
+            gd.deletefile(link)
+        if is_undrive:
+            gd.deletefile(link)
+        if is_sharer:
+            gd.deletefile(link)
+        if is_drivehubs:
             gd.deletefile(link)
     else:
-        sendMessage(
-            "Send Gdrive or GDToT/AppDrive/DriveApp/GDFlix/DriveAce/DriveLinks/DriveBit/DriveSharer/Anidrive/Driveroot/Driveflix/Indidrive/drivehub(in)/HubDrive/DriveHub(ws)/KatDrive/Kolop/DriveFire/DriveBuzz/SharerPw Link along with command or by replying to the link by command",
-            bot,
-            message,
-        )
-
+        sendMessage('Send Gdrive or gdtot/appdrive link along with command or by replying to the link by command', bot, message)
 
 @new_thread
 def cloneNode(update, context):
     _clone(update.message, context.bot)
 
-
 clone_handler = CommandHandler(BotCommands.CloneCommand, cloneNode, filters=CustomFilters.authorized_chat | CustomFilters.authorized_user, run_async=True)
-
 dispatcher.add_handler(clone_handler)
