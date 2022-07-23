@@ -39,7 +39,6 @@ def _clone(message, bot, multi=0):
     is_unified = is_unified_link(link)
     is_udrive = is_udrive_link(link)
     is_sharer = is_sharer_link(link)
-    is_drivehubs = is_drivehubs_link(link)
     if (is_gdtot or is_unified or is_udrive or is_sharer):
         try:
             msg = sendMessage(f"Processing: <code>{link}</code>", bot, message)
@@ -107,7 +106,7 @@ def _clone(message, bot, multi=0):
         else:
             sendMarkup(result + cc, bot, message, button)
             LOGGER.info(f'Cloning Done: {name}')
-        if (is_gdtot or is_unified or is_udrive or is_sharer or is_drivehubs):
+        if (is_gdtot or is_unified or is_udrive or is_sharer):
             gd.deletefile(link)
     else:
         sendMessage('Send Gdrive or GDToT/AppDrive/DriveApp/GDFlix/DriveBit/DriveLinks/DrivePro/DriveAce/DriveSharer/HubDrive/DriveHub/KatDrive/Kolop/DriveFire/SharerPw link along with command or by replying to the link by command', bot, message)
