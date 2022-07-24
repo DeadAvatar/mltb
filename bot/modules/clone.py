@@ -51,8 +51,6 @@ def _clone(message, bot, multi=0):
                 link = udrive(link)
             if is_sharer:
                 link = sharer_pw(link)
-            if is_drivehubs:
-                link = is_drivehubs_link(link)
             deleteMessage(bot, msg)
         except DirectDownloadLinkException as e:
             deleteMessage(bot, msg)
