@@ -30,4 +30,3 @@ tgCrypto
 urllib3
 yt-dlp
 cloudscraper
-html_telegraph_poster
