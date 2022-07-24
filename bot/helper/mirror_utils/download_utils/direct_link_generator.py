@@ -69,6 +69,8 @@ def direct_link_generator(link: str):
         return udrive(link)
     elif is_sharer_link(link):
         return sharer_pw(link)
+    elif 'gplinks.co' in url:
+        return gplink(url)
     elif any(x in link for x in fmed_list):
         return fembed(link)
     elif any(x in link for x in ['sbembed.com', 'watchsb.com', 'streamsb.net', 'sbplay.org']):
@@ -610,3 +612,32 @@ def sharer_pw(url, forced_login=False):
         return flink
     except:
         raise DirectDownloadLinkException("ERROR! File Not Found or User rate exceeded !!")
+
+def gplink(url):
+
+    check = re.findall(r'\bhttps?://.*gplink\S+', url)
+    if not check:
+        raise DirectDownloadLinkException("It's Not GPLinks")
+
+    scraper = cloudscraper.create_scraper(allow_brotli=False)
+    res = scraper.get(url)
+    
+    h = { "referer": res.url }
+    res = scraper.get(url, headers=h)
+    
+    bs4 = BeautifulSoup(res.content, 'lxml')
+    inputs = bs4.find_all('input')
+    data = { input.get('name'): input.get('value') for input in inputs }
+
+    h = {
+        'content-type': 'application/x-www-form-urlencoded',
+        'x-requested-with': 'XMLHttpRequest'
+    }
+    
+    time.sleep(10) # !important
+    
+    p = urlparse(url)
+    final_url = f'{p.scheme}://{p.netloc}/links/go'
+    res = scraper.post(final_url, data=data, headers=h).json()
+
+    return res
