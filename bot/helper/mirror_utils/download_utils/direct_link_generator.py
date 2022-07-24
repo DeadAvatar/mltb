@@ -69,8 +69,8 @@ def direct_link_generator(link: str):
         return udrive(link)
     elif is_sharer_link(link):
         return sharer_pw(link)
-    elif 'gplinks.co' in url:
-        return gplink(url)
+    elif 'gplinks.co' in link:
+        return gplink(link)
     elif any(x in link for x in fmed_list):
         return fembed(link)
     elif any(x in link for x in ['sbembed.com', 'watchsb.com', 'streamsb.net', 'sbplay.org']):
