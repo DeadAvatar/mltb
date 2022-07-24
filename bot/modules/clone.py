@@ -111,7 +111,6 @@ def _clone(message, bot, multi=0):
     else:
         sendMessage('Send Gdrive or GDToT/AppDrive/DriveApp/GDFlix/DriveBit/DriveLinks/DrivePro/DriveAce/DriveSharer/HubDrive/DriveHub/KatDrive/Kolop/DriveFire/SharerPw link along with command or by replying to the link by command', bot, message)
 
-@new_thread
 def cloneNode(update, context):
     _clone(update.message, context.bot)
 
