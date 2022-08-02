@@ -3,7 +3,7 @@ from time import sleep, time
 from re import search as re_search
 from telegram import InlineKeyboardMarkup
 
-from bot import download_dict, download_dict_lock, BASE_URL, get_client, STOP_DUPLICATE, WEB_PINCODE, TORRENT_TIMEOUT, LOGGER, TORRENT_DIRECT_LIMIT, LEECH_LIMIT, ZIP_UNZIP_LIMIT
+from bot import download_dict, download_dict_lock, BASE_URL, get_client, WEB_PINCODE, TORRENT_TIMEOUT, LOGGER, TORRENT_DIRECT_LIMIT, LEECH_LIMIT, ZIP_UNZIP_LIMIT
 from bot.helper.mirror_utils.status_utils.qbit_download_status import QbDownloadStatus
 from bot.helper.mirror_utils.upload_utils.gdriveTools import GoogleDriveHelper
 from bot.helper.telegram_helper.message_utils import sendMessage, sendMarkup, deleteMessage, sendStatusMessage, update_all_messages
@@ -111,23 +111,6 @@ class QbDownloader:
                     self.__onDownloadError("Dead Torrent!")
             elif tor_info.state == "downloading":
                 self.__stalled_time = time()
-                if not self.__dupChecked and STOP_DUPLICATE and ospath.isdir(f'{self.__path}') and not self.__listener.isLeech and not self.select:
-                    LOGGER.info('Checking File/Folder if already in Drive')
-                    qbname = str(listdir(f'{self.__path}')[-1])
-                    if qbname.endswith('.!qB'):
-                        qbname = ospath.splitext(qbname)[0]
-                    if self.__listener.isZip:
-                        qbname = qbname + ".zip"
-                    elif self.__listener.extract:
-                        try:
-                           qbname = get_base_name(qbname)
-                        except:
-                            qbname = None
-                    if qbname is not None:
-                        qbmsg, button = GoogleDriveHelper().drive_list(qbname, True)
-                        if qbmsg:
-                            self.__onDownloadError("File/Folder is already available in Drive.")
-                            sendMarkup("Here are the search results:", self.__listener.bot, self.__listener.message, button)
                     self.__dupChecked = True
                     size = tor_info.size
                     arch = any([self.__listener.isZip, self.__listener.isLeech, self.__listener.extract])
