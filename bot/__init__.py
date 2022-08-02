@@ -118,7 +118,7 @@ AUTHORIZED_CHATS = set()
 SUDO_USERS = set()
 AS_DOC_USERS = set()
 AS_MEDIA_USERS = set()
-EXTENTION_FILTER = set()
+EXTENSION_FILTER = set()
 LOG_CHANNEL = set()
 
 try:
