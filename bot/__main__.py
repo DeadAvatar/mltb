@@ -3,6 +3,8 @@ from os import path as ospath, remove as osremove, execl as osexecl
 from subprocess import run as srun, check_output
 from psutil import disk_usage, cpu_percent, swap_memory, cpu_count, virtual_memory, net_io_counters, boot_time
 from time import time
+from datetime import datetime
+import pytz
 from sys import executable
 from telegram import InlineKeyboardMarkup
 from telegram.ext import CommandHandler
@@ -154,9 +156,12 @@ def main():
                         chat_id, msg_id = map(int, f)
                     msg = 'Restarted Successfully!'
                 else:
-                    msg = 'Bot Restarted!'
+                    kek = datetime.now(pytz.timezone(f'Asia/Kolkata'))
+                    vro = kek.strftime('\n 𝗗𝗮𝘁𝗲 : %d/%m/%Y\n 𝗧𝗶𝗺𝗲: %I:%M%P')
+                    msg = f" 𝐁𝐎𝐓 𝐑𝐄𝐒𝐓𝐀𝐑𝐓𝐄𝐃 \n{vro}\n\n#Restarted"
+                    msg2 = f" 𝐁𝐎𝐓 𝐑𝐄𝐒𝐓𝐀𝐑𝐓𝐄𝐃 \n{vro}\n\n#Restarted"
                 for tag, links in data.items():
-                     msg += f"\n\n{tag}: "
+                     msg += f"\n\n💀 {tag}: "
                      for index, link in enumerate(links, start=1):
                          msg += f" <a href='{link}'>{index}</a> |"
                          if len(msg.encode()) > 4000:
@@ -186,7 +191,7 @@ def main():
     elif not notifier_dict and AUTHORIZED_CHATS:
         for id_ in AUTHORIZED_CHATS:
             try:
-                bot.sendMessage(id_, "Bot Restarted!", 'HTML')
+                bot.sendMessage(id_, msg2, 'HTML')
             except Exception as e:
                 LOGGER.error(e)
 
