@@ -3,7 +3,7 @@ from time import sleep, time
 from re import search as re_search
 from telegram import InlineKeyboardMarkup
 
-from bot import download_dict, download_dict_lock, BASE_URL, get_client, STOP_DUPLICATE, WEB_PINCODE, TORRENT_TIMEOUT, LOGGER
+from bot import download_dict, download_dict_lock, BASE_URL, get_client, STOP_DUPLICATE, WEB_PINCODE, TORRENT_TIMEOUT, LOGGER, TORRENT_DIRECT_LIMIT, LEECH_LIMIT, ZIP_UNZIP_LIMIT
 from bot.helper.mirror_utils.status_utils.qbit_download_status import QbDownloadStatus
 from bot.helper.mirror_utils.upload_utils.gdriveTools import GoogleDriveHelper
 from bot.helper.telegram_helper.message_utils import sendMessage, sendMarkup, deleteMessage, sendStatusMessage, update_all_messages
@@ -129,6 +129,25 @@ class QbDownloader:
                             self.__onDownloadError("File/Folder is already available in Drive.")
                             sendMarkup("Here are the search results:", self.__listener.bot, self.__listener.message, button)
                     self.__dupChecked = True
+                    size = tor_info.size
+                    arch = any([self.__listener.isZip, self.__listener.isLeech, self.__listener.extract])
+                            return
+                    limit = None
+                    if ZIP_UNZIP_LIMIT is not None and arch:
+                        mssg = f'Zip/Unzip limit is {ZIP_UNZIP_LIMIT}GB'
+                        limit = ZIP_UNZIP_LIMIT
+                    if LEECH_LIMIT is not None and self.__listener.isLeech:
+                        mssg = f'Leech limit is {LEECH_LIMIT}GB'
+                        limit = LEECH_LIMIT
+                    elif TORRENT_DIRECT_LIMIT is not None:
+                        mssg = f'Torrent limit is {TORRENT_DIRECT_LIMIT}GB'
+                        limit = TORRENT_DIRECT_LIMIT
+                    if limit is not None:
+                        LOGGER.info('Checking File/Folder Size...')
+                        if size > limit * 1024**3:
+                            fmsg = f"{mssg}.\nYour File/Folder size is {get_readable_file_size(size)}"
+                            self.__onDownloadError(fmsg)
+                    self.__sizeChecked = True
             elif tor_info.state == "stalledDL":
                 if not self.__rechecked and 0.99989999999999999 < tor_info.progress < 1:
                     msg = f"Force recheck - Name: {self.__name} Hash: "
