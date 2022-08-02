@@ -313,7 +313,40 @@ try:
     STOP_DUPLICATE = getConfig('STOP_DUPLICATE')
     STOP_DUPLICATE = STOP_DUPLICATE.lower() == 'true'
 except:
-    STOP_DUPLICATE = False
+    STOP_DUPLICATE = True
+try:
+    TORRENT_DIRECT_LIMIT = getConfig('TORRENT_DIRECT_LIMIT')
+    if len(TORRENT_DIRECT_LIMIT) == 0:
+        raise KeyError
+    TORRENT_DIRECT_LIMIT = float(TORRENT_DIRECT_LIMIT)
+except:
+    TORRENT_DIRECT_LIMIT = None
+try:
+    ZIP_UNZIP_LIMIT = getConfig('ZIP_UNZIP_LIMIT')
+    if len(ZIP_UNZIP_LIMIT) == 0:
+        raise KeyError
+    ZIP_UNZIP_LIMIT = float(ZIP_UNZIP_LIMIT)
+except:
+    ZIP_UNZIP_LIMIT = None
+try:
+    LEECH_LIMIT = getConfig('LEECH_LIMIT')
+    if len(LEECH_LIMIT) == 0:
+        raise KeyError
+    LEECH_LIMIT = float(LEECH_LIMIT)
+except:
+    LEECH_LIMIT = None
+try:
+    FINISHED_PROGRESS_STR = getConfig('FINISHED_PROGRESS_STR')
+    if len(FINISHED_PROGRESS_STR) == 0:
+        FINISHED_PROGRESS_STR = '▰'
+except KeyError:
+    FINISHED_PROGRESS_STR = '▰'
+try:
+    UNFINISHED_PROGRESS_STR = getConfig('UNFINISHED_PROGRESS_STR')
+    if len(UNFINISHED_PROGRESS_STR) == 0:
+        UNFINISHED_PROGRESS_STR = '▱'
+except KeyError:
+    UNFINISHED_PROGRESS_STR = '▱'
 try:
     VIEW_LINK = getConfig('VIEW_LINK')
     VIEW_LINK = VIEW_LINK.lower() == 'true'
