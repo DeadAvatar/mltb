@@ -1,5 +1,5 @@
 from time import sleep
-from bot import aria2, download_dict_lock, download_dict, TORRENT_DIRECT_LIMIT, ZIP_UNZIP_LIMIT, LEECH_LIMIT, LOGGER
+from bot import aria2, download_dict_lock, download_dict, TORRENT_DIRECT_LIMIT, ZIP_UNZIP_LIMIT, LOGGER
 from bot.helper.mirror_utils.upload_utils.gdriveTools import GoogleDriveHelper
 from bot.helper.ext_utils.bot_utils import is_magnet, getDownloadByGid, new_thread, get_readable_file_size
 from bot.helper.mirror_utils.status_utils.aria_download_status import AriaDownloadStatus
@@ -9,7 +9,7 @@ from bot.helper.ext_utils.fs_utils import get_base_name
 @new_thread
 def __onDownloadStarted(api, gid):
     try:
-        if any([STOP_DUPLICATE, TORRENT_DIRECT_LIMIT, ZIP_UNZIP_LIMIT, LEECH_LIMIT]):
+        if any([STOP_DUPLICATE, TORRENT_DIRECT_LIMIT, ZIP_UNZIP_LIMIT]):
             download = api.get_download(gid)
             if download.is_metadata:
                 LOGGER.info(f'onDownloadStarted: {gid} Metadata')
@@ -21,7 +21,7 @@ def __onDownloadStarted(api, gid):
             dl = getDownloadByGid(gid)
             if not dl:
                 return
-            if any([ZIP_UNZIP_LIMIT, LEECH_LIMIT, TORRENT_DIRECT_LIMIT, STORAGE_THRESHOLD]):
+            if any([ZIP_UNZIP_LIMIT, TORRENT_DIRECT_LIMIT]):
                 sleep(1)
                 limit = None
                 size = download.total_length
@@ -29,9 +29,6 @@ def __onDownloadStarted(api, gid):
                 if ZIP_UNZIP_LIMIT is not None and arch:
                     mssg = f'Zip/Unzip limit is {ZIP_UNZIP_LIMIT}GB'
                     limit = ZIP_UNZIP_LIMIT
-                if LEECH_LIMIT is not None and dl.getListener().isLeech:
-                    mssg = f'Leech limit is {LEECH_LIMIT}GB'
-                    limit = LEECH_LIMIT
                 elif TORRENT_DIRECT_LIMIT is not None:
                     mssg = f'Torrent/Direct limit is {TORRENT_DIRECT_LIMIT}GB'
                     limit = TORRENT_DIRECT_LIMIT
