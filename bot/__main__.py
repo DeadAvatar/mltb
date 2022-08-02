@@ -19,7 +19,7 @@ from .helper.telegram_helper.message_utils import sendMessage, sendMarkup, editM
 from .helper.telegram_helper.filters import CustomFilters
 from .helper.telegram_helper.button_build import ButtonMaker
 
-from .modules import authorize, list, cancel_mirror, mirror_status, mirror, watch, shell, eval, leech_settings, qbselect
+from .modules import authorize, cancel_mirror, mirror_status, mirror, watch, shell, eval, leech_settings, qbselect
 
 
 def stats(update, context):
