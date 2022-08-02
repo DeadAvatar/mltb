@@ -54,7 +54,6 @@ def cancell_all_buttons(update, context):
     buttons.sbutton("Downloading", "canall down")
     buttons.sbutton("Uploading", "canall up")
     buttons.sbutton("Seeding", "canall seed")
-    buttons.sbutton("Cloning", "canall clone")
     buttons.sbutton("Extracting", "canall extract")
     buttons.sbutton("Archiving", "canall archive")
     buttons.sbutton("Splitting", "canall split")
