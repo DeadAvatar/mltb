@@ -345,13 +345,6 @@ try:
 except:
     ZIP_UNZIP_LIMIT = None
 try:
-    LEECH_LIMIT = getConfig('LEECH_LIMIT')
-    if len(LEECH_LIMIT) == 0:
-        raise KeyError
-    LEECH_LIMIT = float(LEECH_LIMIT)
-except:
-    LEECH_LIMIT = None
-try:
     FINISHED_PROGRESS_STR = getConfig('FINISHED_PROGRESS_STR')
     if len(FINISHED_PROGRESS_STR) == 0:
         FINISHED_PROGRESS_STR = '▰'
