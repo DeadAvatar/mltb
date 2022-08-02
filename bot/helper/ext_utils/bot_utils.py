@@ -145,6 +145,7 @@ def get_readable_message():
                 msg += f"\n<b>🌱 Seeders:</b> {download.aria_download().num_seeders}" \
                            f" | \n<b>⚙ Engine:</b> 𝗮𝗿𝗶𝗮𝟮\n<b>📶 Peers:</b> {download.aria_download().connections}"
                 except:
+
                 try:
                     msg += f"\n<b>🌱 Seeders:</b> {download.torrent_info().num_seeds}" \
                            f" | \n<b>⚙ Engine:</b> 𝐪𝐁𝐢𝐭𝐭𝐨𝐫𝐫𝐞𝐧𝐭\n<b>⛳ Leechers:</b> {download.torrent_info().num_leechs}"
