@@ -21,10 +21,6 @@ from .modules import authorize, list, cancel_mirror, mirror_status, mirror, clon
 
 
 def stats(update, context):
-    if ospath.exists('.git'):
-        last_commit = check_output(["git log -1 --date=short --pretty=format:'%cd <b>From</b> %cr'"], shell=True).decode()
-    else:
-        last_commit = 'No UPSTREAM_REPO'
     currentTime = get_readable_time(time() - botStartTime)
     osUptime = get_readable_time(time() - boot_time())
     total, used, free, disk= disk_usage('/')
@@ -44,22 +40,23 @@ def stats(update, context):
     mem_t = get_readable_file_size(memory.total)
     mem_a = get_readable_file_size(memory.available)
     mem_u = get_readable_file_size(memory.used)
-    stats = f'<b>Commit Date:</b> {last_commit}\n\n'\
-            f'<b>Bot Uptime:</b> {currentTime}\n'\
-            f'<b>OS Uptime:</b> {osUptime}\n\n'\
-            f'<b>Total Disk Space:</b> {total}\n'\
-            f'<b>Used:</b> {used} | <b>Free:</b> {free}\n\n'\
-            f'<b>Upload:</b> {sent}\n'\
-            f'<b>Download:</b> {recv}\n\n'\
-            f'<b>CPU:</b> {cpuUsage}%\n'\
-            f'<b>RAM:</b> {mem_p}%\n'\
-            f'<b>DISK:</b> {disk}%\n\n'\
-            f'<b>Physical Cores:</b> {p_core}\n'\
-            f'<b>Total Cores:</b> {t_core}\n\n'\
-            f'<b>SWAP:</b> {swap_t} | <b>Used:</b> {swap_p}%\n'\
-            f'<b>Memory Total:</b> {mem_t}\n'\
-            f'<b>Memory Free:</b> {mem_a}\n'\
-            f'<b>Memory Used:</b> {mem_u}\n'
+    stats = f'<b>╭──《 𝗕ᴏᴛ 𝗦ᴛᴀᴛɪ𝘀ᴛɪᴄ𝘀 》</b>\n' \
+            f'<b>│</b>\n' \
+            f'<b>|--𝗕𝗼𝘁 𝗨𝗽𝘁𝗶𝗺𝗲:</b> {currentTime}\n'\
+            f'<b>|--𝗢𝗦 𝗨𝗽𝘁𝗶𝗺𝗲:</b> {osUptime}\n\n'\
+            f'<b>|--𝗧𝗼𝘁𝗮𝗹 𝗗𝗶𝘀𝗸 𝗦𝗽𝗮𝗰𝗲:</b> {total}\n'\
+            f'<b>|--𝗨𝘀𝗲𝗱:</b> {used} | <b>𝗙𝗿𝗲𝗲:</b> {free}\n\n'\
+            f'<b>|--𝗨𝗽𝗹𝗼𝗮𝗱:</b> {sent}\n'\
+            f'<b>|--𝗗𝗼𝘄𝗻𝗹𝗼𝗮𝗱:</b> {recv}\n\n'\
+            f'<b>|--𝗖𝗣𝗨:</b> {cpuUsage}%\n'\
+            f'<b>|--𝗥𝗔𝗠:</b> {mem_p}%\n'\
+            f'<b>|--𝗗𝗜𝗦𝗞:</b> {disk}%\n\n'\
+            f'<b>|--𝗣𝗵𝘆𝘀𝗶𝗰𝗮𝗹 𝗖𝗼𝗿𝗲𝘀:</b> {p_core}\n'\
+            f'<b>|--𝗧𝗼𝘁𝗮𝗹 𝗖𝗼𝗿𝗲𝘀:</b> {t_core}\n\n'\
+            f'<b>|--𝗦𝗪𝗔𝗣:</b> {swap_t} | <b>𝗨𝘀𝗲𝗱:</b> {swap_p}%\n'\
+            f'<b>|--𝗠𝗲𝗺𝗼𝗿𝘆 𝗧𝗼𝘁𝗮𝗹:</b> {mem_t}\n'\
+            f'<b>|--𝗠𝗲𝗺𝗼𝗿𝘆 𝗙𝗿𝗲𝗲:</b> {mem_a}\n'\
+            f'<b>|--𝗠𝗲𝗺𝗼𝗿𝘆 𝗨𝘀𝗲𝗱:</b> {mem_u}\n'
     sendMessage(stats, context.bot, update.message)
 
 
