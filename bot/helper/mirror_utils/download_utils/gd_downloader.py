@@ -53,5 +53,5 @@ def add_gd_download(link, listener, newname, is_gdtot):
     listener.onDownloadStart()
     sendStatusMessage(listener.message, listener.bot)
     drive.download(link)
-    if is_gdtot:
-        drive.deletefile(link)
+    if (is_gdtot or is_unified or is_udrive or is_sharer):
+            gd.deletefile(link)
