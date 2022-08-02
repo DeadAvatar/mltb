@@ -6,7 +6,7 @@ from threading import RLock
 from time import time
 from re import search as re_search
 
-from bot import download_dict_lock, download_dict, LEECH_LIMIT
+from bot import download_dict_lock, download_dict
 from bot.helper.telegram_helper.message_utils import sendStatusMessage
 from bot.helper.ext_utils.bot_utils import get_readable_file_size
 from ..status_utils.youtube_dl_download_status import YoutubeDLDownloadStatus
