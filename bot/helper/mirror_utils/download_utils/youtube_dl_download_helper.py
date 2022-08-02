@@ -184,10 +184,6 @@ class YoutubeDLHelper:
         self.extractMetaData(link, name, args)
         if self.__is_cancelled:
             return
-        if LEECH_LIMIT is not None and self.__listener.isLeech:
-            msg = f'Leech Limit is: {LEECH_LIMIT}GB.'
-            msg += f'\nYour File/Folder size is {get_readable_file_size(self.size)}'
-            return self.__onDownloadError(msg)
         if self.is_playlist:
             self.opts['outtmpl'] = f"{path}/{self.name}/%(title)s.%(ext)s"
         elif args is None:
