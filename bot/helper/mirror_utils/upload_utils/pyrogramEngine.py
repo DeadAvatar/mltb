@@ -7,7 +7,7 @@ from threading import RLock
 from pyrogram import Client, enums
 
 from bot import DOWNLOAD_DIR, AS_DOCUMENT, AS_DOC_USERS, AS_MEDIA_USERS, CUSTOM_FILENAME, \
-                 EXTENTION_FILTER, app, LOG_CHANNEL
+                 EXTENSION_FILTER, app, LOG_CHANNEL
 from bot.helper.ext_utils.fs_utils import take_ss, get_media_info, get_path_size
 from bot.helper.ext_utils.bot_utils import get_readable_file_size
 
@@ -43,7 +43,7 @@ class TgUploader:
         size = get_readable_file_size(get_path_size(path))
         for dirpath, subdir, files in sorted(walk(path)):
             for file_ in sorted(files):
-                if not file_.lower().endswith(tuple(EXTENTION_FILTER)):
+                if not file_.lower().endswith(tuple(EXTENSION_FILTER)):
                     self.__total_files += 1
                     up_path = ospath.join(dirpath, file_)
                     if ospath.getsize(up_path) == 0:
