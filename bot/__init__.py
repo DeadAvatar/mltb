@@ -117,7 +117,8 @@ AUTHORIZED_CHATS = set()
 SUDO_USERS = set()
 AS_DOC_USERS = set()
 AS_MEDIA_USERS = set()
-EXTENSION_FILTER = set()
+EXTENTION_FILTER = set()
+LOG_CHANNEL = set()
 
 try:
     aid = getConfig('AUTHORIZED_CHATS')
@@ -155,6 +156,20 @@ try:
 except:
     log_error("One or more env variables missing! Exiting now")
     exit(1)
+
+if os.path.exists("log_channel.txt"):
+    with open("logs_chat.txt", "r+") as f:
+        lines = f.readlines()
+        for line in lines:
+            LOG_CHANNEL.add(int(line.split()[0]))
+try:
+    achats = getConfig("LOG_CHANNEL")
+    achats = achats.split(" ")
+    for chats in achats:
+        LOG_CHANNEL.add(int(chats))
+except:
+    LOGGER.error('🚫🚫Log Channel Details not provided!🚫🚫')
+
 
 try:
     IS_PREMIUM_USER = False
