@@ -461,7 +461,7 @@ def unified(url: str) -> str:
     if info_parsed['error']:
         raise DirectDownloadLinkException(f"ERROR! {info_parsed['error_message']}")
     
-    if urlparse(url).netloc == 'appdrive.in':
+    if urlparse(url).netloc == 'appdrive.info':
         flink = info_parsed['gdrive_link']
         return flink
       
@@ -504,7 +504,9 @@ def udrive(url: str) -> str:
     else:
       client = cloudscraper.create_scraper(delay=10, browser='chrome')
     
-    if 'hubdrive' in url:
+    if "hubdrive" in url:
+        if "hubdrive.in" in url:
+            url = url.replace(".in",".pro")
         client.cookies.update({'crypt': HUBDRIVE_CRYPT})
     if 'drivehub' in url:
         client.cookies.update({'crypt': KATDRIVE_CRYPT})
