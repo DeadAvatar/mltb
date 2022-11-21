@@ -21,7 +21,6 @@ from bot.helper.ext_utils.exceptions import DirectDownloadLinkException
 
 
 def scrapper(update, context):
-    user_id_ = update.message.from_user.id
     message:Message = update.effective_message
     link = None
     if message.reply_to_message: link = message.reply_to_message.text
