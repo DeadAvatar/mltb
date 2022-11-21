@@ -2,6 +2,8 @@ from requests import get as rget, head as rhead, post as rpost, Session as rsess
 from re import findall as re_findall, sub as re_sub, match as re_match, search as re_search
 import requests
 import re
+
+from time import sleep
 from base64 import b64decode
 from urllib.parse import urlparse, unquote
 from json import loads as jsnloads
@@ -68,6 +70,12 @@ def direct_link_generator(link: str):
         return udrive(link)
     elif is_sharer_link(link):
         return sharer_pw(link)
+    elif is_rock_link(link):
+        return rock(link)
+    elif is_try2link_link(link):
+        return try2link(link)
+    elif is_ez4_link(link):
+        return ez4(link)
     elif any(x in link for x in fmed_list):
         return fembed(link)
     elif any(x in link for x in ['sbembed.com', 'watchsb.com', 'streamsb.net', 'sbplay.org']):
@@ -611,3 +619,60 @@ def sharer_pw(url, forced_login=False):
         return flink
     except:
         raise DirectDownloadLinkException("ERROR! File Not Found or User rate exceeded !!")
+
+def rock(url: str) -> str:
+    client = cloudscraper.create_scraper(allow_brotli=False)
+    if 'rocklinks.net' in url:
+        DOMAIN = "https://blog.disheye.com"
+    else:
+        DOMAIN = "https://go.techyjeeshan.xyz"
+
+    url = url[:-1] if url[-1] == '/' else url
+
+    code = url.split("/")[-1]
+    if 'rocklinks.net' in url:
+        final_url = f"{DOMAIN}/{code}?quelle=" 
+    else:
+        final_url = f"{DOMAIN}/{code}?quelle="
+
+    resp = client.get(final_url)
+    soup = BeautifulSoup(resp.content, "html.parser")
+    
+    try: inputs = soup.find(id="go-link").find_all(name="input")
+    except: return "Incorrect Link"    
+    data = { input.get('name'): input.get('value') for input in inputs }
+    h = { "x-requested-with": "XMLHttpRequest" } 
+    sleep(10)
+    r = client.post(f"{DOMAIN}/links/go", data=data, headers=h)
+    try:
+        return r.json()['url']
+    except: return "Something went wrong :("
+
+def try2link(url):
+    client = create_scraper()    
+    url = url[:-1] if url[-1] == '/' else url    
+    params = (('d', int(time.time()) + (60 * 4)),)
+    r = client.get(url, params=params, headers= {'Referer': 'https://newforex.online/'})   
+    soup = BeautifulSoup(r.text, 'html.parser')
+    inputs = soup.find_all("input")
+    data = { input.get('name'): input.get('value') for input in inputs }
+    sleep(7)    
+    headers = {'Host': 'try2link.com', 'X-Requested-With': 'XMLHttpRequest', 'Origin': 'https://try2link.com', 'Referer': url}    
+    bypassed_url = client.post('https://try2link.com/links/go', headers=headers,data=data)
+    return bypassed_url.json()["url"]
+
+def ez4(url):    
+    client = cloudscraper.create_scraper(allow_brotli=False)      
+    DOMAIN = "https://ez4short.com"     
+    ref = "https://techmody.io/"   
+    h = {"referer": ref}  
+    resp = client.get(url,headers=h)   
+    soup = BeautifulSoup(resp.content, "html.parser")    
+    inputs = soup.find_all("input")   
+    data = { input.get('name'): input.get('value') for input in inputs }
+    h = { "x-requested-with": "XMLHttpRequest" }   
+    sleep(8)
+    r = client.post(f"{DOMAIN}/links/go", data=data, headers=h)
+    try:
+        return r.json()['url']
+    except: return "Something went wrong :("
