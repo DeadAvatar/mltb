@@ -270,8 +270,6 @@ def htpmovies(link):
         return r.json()['url']
     except: return "Something went Wrong !!"
         
-srp_handler = CommandHandler(BotCommands.ScrapeCommand, scrapper,
-
-                                filters=CustomFilters.authorized_chat | CustomFilters.authorized_user, run_async=True)
+srp_handler = CommandHandler(BotCommands.ScrapeCommand, scrapper, filters=CustomFilters.authorized_chat | CustomFilters.authorized_user, run_async=True)
 
 dispatcher.add_handler(srp_handler)
