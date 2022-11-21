@@ -12,7 +12,7 @@ from bs4 import BeautifulSoup, NavigableString, Tag
 import time
 from telegram import Message
 from telegram.ext import CommandHandler
-from bot import LOGGER, dispatcher, OWNER_ID
+from bot import LOGGER, dispatcher, IS_TEAM_DRIVE, SUDO_USERS, OWNER_ID
 from bot.helper.telegram_helper.filters import CustomFilters
 from bot.helper.telegram_helper.bot_commands import BotCommands
 from bot.helper.telegram_helper.message_utils import sendMessage, editMessage, deleteMessage
@@ -21,6 +21,11 @@ from bot.helper.ext_utils.exceptions import DirectDownloadLinkException
 
 
 def scrapper(update, context):
+    user_id_ = update.message.from_user.id
+    if IS_TEAM_DRIVE is True:
+        if not (user_id_ in SUDO_USERS) and user_id_ != OWNER_ID:
+            sendMessage(f"FKOFF.", context.bot, update.message)
+            return
     message:Message = update.effective_message
     link = None
     if message.reply_to_message: link = message.reply_to_message.text
