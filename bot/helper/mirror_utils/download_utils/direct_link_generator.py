@@ -494,12 +494,6 @@ def parse_info(res, url):
     info_parsed = {}
     if 'drivebuzz' in url:
         info_chunks = re_findall('<td\salign="right">(.*?)<\/td>', res.text)
-    elif 'sharer.pw' in url:
-        f = re_findall(">(.*?)<\/td>", res.text)
-        info_parsed = {}
-        for i in range(0, len(f), 3):
-          info_parsed[f[i].lower().replace(' ', '_')] = f[i+2]
-          return info_parsed
     else:
         info_chunks = re_findall('>(.*?)<\/td>', res.text)
     for i in range(0, len(info_chunks), 2):
@@ -568,57 +562,28 @@ def udrive(url: str) -> str:
 
     return flink
 
-def sharer_pw(url, forced_login=False):
-    client = cloudscraper.create_scraper(delay=10, browser='chrome')
+def sharer_pw(url: str)-> str:
     
-    client.cookies.update({
-        "XSRF-TOKEN": XSRF_TOKEN,
-        "laravel_session": laravel_session
-    })
+    client = cloudscraper.create_scraper(delay=10, browser='chrome')
+    client.cookies["XSRF-TOKEN"] = XSRF_TOKEN
+    client.cookies["laravel_session"] = laravel_session
     
     res = client.get(url)
-    token = re_findall("token\s=\s'(.*?)'", res.text, re.DOTALL)[0]
-    
-    ddl_btn = etree.HTML(res.content).xpath("//button[@id='btndirect']")
-    
-    info_parsed = parse_info(res, url)
-    info_parsed['error'] = True
-    info_parsed['src_url'] = url
-    info_parsed['link_type'] = 'login' # direct/login
-    info_parsed['forced_login'] = forced_login
-    
-    headers = {
-        'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
-        'x-requested-with': 'XMLHttpRequest'
-    }
-    
-    data = {
-        '_token': token
-    }
-    
-    if len(ddl_btn):
-        info_parsed['link_type'] = 'direct'
-    if not forced_login:
-        data['nl'] = 1
-    
-    try: 
-        res = client.post(url+'/dl', headers=headers, data=data).json()
-    except:
-        return info_parsed
-    
-    if 'url' in res and res['url']:
-        info_parsed['error'] = False
-        info_parsed['gdrive_link'] = res['url']
-        
-    if len(ddl_btn) and not forced_login and not 'url' in info_parsed:
-        # retry download via login
-        return sharer_pw(url, forced_login=True)
-      
+    token = re.findall("_token\s=\s'(.*?)'", res.text, re.DOTALL)[0]
+    data = { '_token': token, 'nl' :1}
+    headers={ 'content-type': 'application/x-www-form-urlencoded; charset=UTF-8', 'x-requested-with': 'XMLHttpRequest'}
+
     try:
-        flink = info_parsed['gdrive_link']
-        return flink
+        response = client.post(url+'/dl', headers=headers, data=data).json()
+        drive_link = response
+        return drive_link['url']
+    
     except:
-        raise DirectDownloadLinkException("ERROR! File Not Found or User rate exceeded !!")
+        if drive_link["message"] == "OK":
+            raise DirectDownloadLinkException("Something went wrong. Could not generate GDrive URL for your Sharer Link")
+        else:
+            finalMsg = BeautifulSoup(drive_link["message"], "lxml").text
+            raise DirectDownloadLinkException(finalMsg)
 
 def rock(url: str) -> str:
     client = cloudscraper.create_scraper(allow_brotli=False)
