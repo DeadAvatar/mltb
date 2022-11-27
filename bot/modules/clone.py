@@ -10,29 +10,51 @@ from bot.helper.telegram_helper.filters import CustomFilters
 from bot.helper.telegram_helper.bot_commands import BotCommands
 from bot.helper.mirror_utils.status_utils.clone_status import CloneStatus
 from bot import dispatcher, LOGGER, STOP_DUPLICATE, download_dict, download_dict_lock, Interval
-from bot.helper.ext_utils.bot_utils import is_gdrive_link, new_thread
+from bot.helper.ext_utils.bot_utils import *
+from bot.helper.mirror_utils.download_utils.direct_link_generator import *
+from bot.helper.ext_utils.exceptions import DirectDownloadLinkException
 
 
 def _clone(message, bot, multi=0):
-    args = message.text.split()
+    args = message.text.split(" ", maxsplit=1)
     reply_to = message.reply_to_message
     link = ''
     if len(args) > 1:
-        link = args[1].strip()
-        if link.strip().isdigit():
+        link = args[1]
+        if link.isdigit():
             multi = int(link)
             link = ''
         elif message.from_user.username:
             tag = f"@{message.from_user.username}"
         else:
             tag = message.from_user.mention_html(message.from_user.first_name)
-    if reply_to:
+    if reply_to is not None:
         if len(link) == 0:
-            link = reply_to.text.split(maxsplit=1)[0].strip()
+            link = reply_to.text
         if reply_to.from_user.username:
             tag = f"@{reply_to.from_user.username}"
         else:
             tag = reply_to.from_user.mention_html(reply_to.from_user.first_name)
+    is_gdtot = is_gdtot_link(link)
+    is_unified = is_unified_link(link)
+    is_udrive = is_udrive_link(link)
+    is_sharer = is_sharer_link(link)
+    if (is_gdtot or is_unified or is_udrive or is_sharer):
+        try:
+            msg = sendMessage(f"Processing: <code>{link}</code>", bot, message)
+            LOGGER.info(f"Processing: {link}")
+            if is_unified:
+                link = unified(link)
+            if is_gdtot:
+                link = gdtot(link)
+            if is_udrive:
+                link = udrive(link)
+            if is_sharer:
+                link = sharer_pw(link)
+            deleteMessage(bot, msg)
+        except DirectDownloadLinkException as e:
+            deleteMessage(bot, msg)
+            return sendMessage(str(e), bot, message)
     if is_gdrive_link(link):
         gd = GoogleDriveHelper()
         res, size, name, files = gd.helper(link)
@@ -82,10 +104,11 @@ def _clone(message, bot, multi=0):
         else:
             sendMarkup(result + cc, bot, message, button)
             LOGGER.info(f'Cloning Done: {name}')
+        if (is_gdtot or is_unified or is_udrive or is_sharer):
+            gd.deletefile(link)
     else:
-        sendMessage('Send Gdrive link along with command or by replying to the link by command', bot, message)
+        sendMessage('Send Gdrive or GDToT/AppDrive/DriveApp/GDFlix/DriveBit/DriveLinks/DrivePro/DriveAce/DriveSharer/HubDrive/DriveHub/KatDrive/Kolop/DriveFire/SharerPw link along with command or by replying to the link by command', bot, message)
 
-@new_thread
 def cloneNode(update, context):
     _clone(update.message, context.bot)
 
